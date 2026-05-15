@@ -15,6 +15,7 @@ async function login() {
 
     if (data.success) {
         currentUser = data.user;
+
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('chatBox').style.display = 'flex';
 
@@ -27,12 +28,17 @@ async function login() {
 }
 
 async function sendMessage() {
-    const text = document.getElementById('messageInput').value;
-    const file = document.getElementById('fileInput').files[0];
+    const input = document.getElementById('messageInput');
+    const fileInput = document.getElementById('fileInput');
+
+    const text = input.value.trim();
+    const file = fileInput.files[0];
+
+    if (!text && !file) return;
 
     let msg = {
         user: currentUser.username,
-        text
+        text: text
     };
 
     if (file) {
@@ -45,31 +51,39 @@ async function sendMessage() {
         });
 
         const data = await res.json();
+
         msg.file = data.fileUrl;
         msg.fileName = data.fileName;
     }
 
     socket.emit('chat message', msg);
-    document.getElementById('messageInput').value = '';
+
+    input.value = '';
+    fileInput.value = '';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const messageInput = document.getElementById('messageInput');
+function handleEnter(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
+    }
+}
 
-    messageInput.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            sendMessage();
-        }
-    });
-});
+function insertEmoji() {
+    const input = document.getElementById('messageInput');
+    input.value += '😊';
+    input.focus();
+}
+
 function sendLike() {
     document.getElementById('messageInput').value = '👍';
     sendMessage();
 }
+
 function toggleAdminPanel() {
     const panel = document.getElementById('adminPanel');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    panel.style.display =
+        panel.style.display === 'none' ? 'block' : 'none';
 }
 
 async function addUser() {
@@ -88,15 +102,61 @@ async function addUser() {
         alert('User added successfully');
         document.getElementById('newUsername').value = '';
         document.getElementById('newPassword').value = '';
+    } else {
+        alert(data.message || 'Cannot add user');
+    }
+}
+
+async function captureScreen() {
+    try {
+        await navigator.mediaDevices.getDisplayMedia({
+            video: true
+        });
+        alert('Đã mở chọn màn hình');
+    } catch (err) {
+        console.log(err);
     }
 }
 
 socket.on('chat message', msg => {
     const div = document.createElement('div');
     div.classList.add('message');
-    div.classList.add(msg.user === currentUser.username ? 'mine' : 'other');
+    div.classList.add(
+        msg.user === currentUser.username ? 'mine' : 'other'
+    );
 
-    div.innerHTML = `<b>${msg.user}</b><br>${msg.text || ''}<br>${msg.file ? `<a href="${msg.file}" target="_blank">${msg.fileName}</a>` : ''}`;
+    let content = `
+<div class="msg-top">
+   <img src="https://i.pravatar.cc/35?u=${msg.user}" class="avatar">
+   <b>${msg.user}</b>
+</div>
+`;
+
+    if (msg.text) {
+        content += `<div>${msg.text}</div>`;
+    }
+
+    if (msg.file) {
+        const isImage = msg.file.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+
+        if (isImage) {
+            content += `
+                <img src="${msg.file}" 
+                     style="max-width:220px; margin-top:8px; border-radius:12px;">
+            `;
+        } else {
+            content += `
+                <br><a href="${msg.file}" target="_blank">
+                    📎 ${msg.fileName}
+                </a>
+            `;
+        }
+    }
+
+    div.innerHTML = content;
 
     document.getElementById('messages').appendChild(div);
+
+    const messages = document.getElementById('messages');
+    messages.scrollTop = messages.scrollHeight;
 });
