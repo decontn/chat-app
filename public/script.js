@@ -141,15 +141,29 @@ socket.on('chat message', msg => {
 
         if (isImage) {
             content += `
+            <div style="margin-top:8px;">
                 <img src="${msg.file}" 
-                     style="max-width:220px; margin-top:8px; border-radius:12px;">
-            `;
+                     style="max-width:220px; border-radius:12px; display:block;">
+                
+                <a href="${msg.file}" download="${msg.fileName}"
+                   style="display:inline-block; margin-top:6px; color:#0088cc; text-decoration:none; font-size:14px;">
+                   ⬇️ Tải ảnh
+                </a>
+            </div>
+        `;
         } else {
             content += `
-                <br><a href="${msg.file}" target="_blank">
+            <div style="margin-top:8px;">
+                <a href="${msg.file}" target="_blank">
                     📎 ${msg.fileName}
                 </a>
-            `;
+                <br>
+                <a href="${msg.file}" download="${msg.fileName}"
+                   style="color:#0088cc; text-decoration:none; font-size:14px;">
+                   ⬇️ Tải file
+                </a>
+            </div>
+        `;
         }
     }
 
