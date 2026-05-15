@@ -63,7 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
+function sendLike() {
+    document.getElementById('messageInput').value = '👍';
+    sendMessage();
+}
 function toggleAdminPanel() {
     const panel = document.getElementById('adminPanel');
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';

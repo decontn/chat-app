@@ -146,3 +146,54 @@ button:hover {
 #messageInput {
     background: #f9fafb;
 }
+
+.chat-input-wrapper {
+    background: #1e293b;
+    padding: 10px 16px;
+    border-top: 1px solid #334155;
+}
+
+.toolbar {
+    display: flex;
+    gap: 18px;
+    color: #cbd5e1;
+    font-size: 20px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.toolbar label,
+.toolbar span {
+    cursor: pointer;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+
+.input-row input[type="text"] {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 16px;
+    padding: 8px;
+}
+
+.input-row input[type="text"]::placeholder {
+    color: #94a3b8;
+}
+
+.emoji-btn,
+.like-btn {
+    font-size: 22px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    margin-left: 10px;
+}
