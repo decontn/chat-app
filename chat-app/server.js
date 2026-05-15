@@ -15,6 +15,9 @@ if (!fs.existsSync('uploads')) {
 
 app.use(express.json());
 app.use(express.static('public'));
+app.get('/test', (req, res) => {
+    res.send('Server OK');
+});
 app.use('/uploads', express.static('uploads'));
 
 const storage = multer.diskStorage({
