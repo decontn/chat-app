@@ -160,3 +160,34 @@ socket.on('chat message', msg => {
     const messages = document.getElementById('messages');
     messages.scrollTop = messages.scrollHeight;
 });
+document.addEventListener('paste', async function (event) {
+    const items = event.clipboardData.items;
+
+    for (let item of items) {
+
+        // Paste ảnh
+        if (item.type.indexOf('image') !== -1) {
+            const file = item.getAsFile();
+
+            const formData = new FormData();
+            formData.append('file', file, 'pasted-image.png');
+
+            const res = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const msg = {
+                user: currentUser.username,
+                text: '',
+                file: data.fileUrl,
+                fileName: data.fileName
+            };
+
+            socket.emit('chat message', msg);
+            return;
+        }
+    }
+});
