@@ -46,4 +46,15 @@ io.on('connection', socket => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log('Running on ' + PORT));
+
+process.on('uncaughtException', err => {
+    console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', err => {
+    console.error('Unhandled Rejection:', err);
+});
+
+server.listen(PORT, () => {
+    console.log('Running on ' + PORT);
+});
